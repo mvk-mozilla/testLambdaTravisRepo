@@ -1,0 +1,27 @@
+language: python
+python:
+- '3.6'
+branches:
+  only: master
+install:
+- pip install -r requirements.txt
+- pip install awscli
+- pip install aws-sam-cli
+script:
+- pytest
+- sam validate
+- sam package --template-file template.yaml --s3-bucket slackbotohdeploybucket --output-template-file packaged.yaml
+deploy:
+  provider: script
+  script: sam deploy --template-file packaged.yaml --stack-name travis-serverless-test --capabilities CAPABILITY_IAM
+  skip_cleanup: true
+  on:
+    branch: master
+notifications:
+  email:
+    on_failure: always
+env:
+  global:
+  - AWS_DEFAULT_REGION=us-east-2
+#  - secure: QShUOP1LqQI+x66N4oRV4SMaIdXAphxmHSm64BIMR2dM0fiYgftie0vqu72cPgmdQ56Nlrk2yM9iTyPycezUNsHuGcOYGTq0jkznW8bTvfVy2asNjqMuRf5TIJ6PcUuAqZTq0w2dM2H73/SlyT5sA+Ylxz+Dvn6fp3EprtwKB60I/W2mHS2NVT8cwS8PuCFt/R16zxfKfANljA0VCnHdz8XpouRZ4GNzHBPiCjejEObNx20jw5CKrDQD/3P9ie9yben7p/HeohEuv8tWni4vDG23hCx+g2zbCnwGLXcVii2zvzeLqVHROEf+tRsvVQknQVX9FIu5Lz6MM/oYIsLtZ6QQcn/Tn9tDidqV23YgWevFmxA+UIx5r6N/o1tJuC3f1lG9BWxjlLD7R3uMp4pTQBF8m60cuJRme+6FJkKZOluZ/0Qe6vlZ+/krjw72htkFHdUrQs+hFdbXBJD0/nNHzgXpH9snfyf4dhxsVz67yV4FpkJyoLyzldJpQd8DjLCZ0W47dyRuZgmpbnEXCAU1YY87A8nyFC5KX0pIhvcXhPO53rCEBsUHCooXLehZNutn/n7zRtV6JXPH5NjNh2/r08joED/tgqPV1MhOjv7Ufxaj5VNKZCWhAyU2NR+11c1JvNO2TvIO6Mf4b7hPxcHVU4LzbZ0kC84PPq7nF0yakWo=
+#  - secure: EisNJ5fqPPnyvCMtw7DYkJ+3FPB+X92wEnGoXUhbwepIsjSgaQI3FAj4Jq3fLvq36JTmFZtKdATlrumcNIP5KvRXRavtUVU5mVPOSfbb1KdHGmFXmOmZMfhlshqXifBAISOvA90ajj+QoEgpCwRlLBYH22Zo64sUzA80zQvNDJ0iEhVz5kfrmbFusfBQ/CBy3Bde69DAyM89Me4ch9oNjvfoDL1dpdqmCqRB+5hml3AjewZ9GaOWVsZtg6CkqCOi8yMa5ptd03AaTI2w6ExXJdT21sg0cbt8jWjn/9CLRYR9rFdhr9gv9gK02Zh3yHA0XliesYhPFeYe7wkH95+Ix/dTo05/IbG+ETaxwfl+sGgBllonJHu4N/5rrMCdYI1cev9WMH9Q/3+KP68IKn2GgK9GpEDYZcsE/25EBP3Qw/RKXWelCjgXpdQXMtFZyuKNVK6B1cWsEUdNPbFZ0UUrSuJ010UTJri+E5dK0nWf8vxeZMoxzdu166Okd06nxqxobfSJQUbTlldUfxtCeRJsWTbqT3atEC0D9mBESjGIV9+/JFMPhbFs8QSbIWIryDXgfKnkMlNYvcLWtLooDQxu6cZVjmVr5bbaZXeiGIBo7bu/StZ568quw+jCPOrkPTusM93ubfSHOBqeQ4k7wAK1NW/T20LEmwrvpzpXKiY0Dfw=
